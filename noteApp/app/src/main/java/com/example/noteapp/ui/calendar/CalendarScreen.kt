@@ -65,7 +65,7 @@ fun CalendarScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(30.dp))
@@ -73,7 +73,7 @@ fun CalendarScreen(
             .height(50.dp)
             .align(Alignment.End),
 
-        ){
+            ){
             SmallButton(
                 icon = painterResource(id = R.drawable.log_out_button),
                 desc = "log_out"
@@ -104,7 +104,6 @@ fun CalendarScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface, shape = RoundedCornerShape(8.dp))
-                .padding(5.dp)
         )
 
         /*// Button to confirm date selection
@@ -126,8 +125,9 @@ fun CalendarScreen(
                 .fillMaxWidth()
         )*/
         Box(modifier = Modifier
-            .width(50.dp)
+            .width(66.dp)
             .height(50.dp)
+            .padding(end = 16.dp)
             .background(ButtonColorBlue, shape = RoundedCornerShape(15.dp))
             .align(Alignment.End),
             contentAlignment = Alignment.Center){
@@ -168,6 +168,7 @@ fun CalendarScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .height(1.dp)
+                            .padding(horizontal = 16.dp)
                             .background(Color.Black)
                     )
                 }

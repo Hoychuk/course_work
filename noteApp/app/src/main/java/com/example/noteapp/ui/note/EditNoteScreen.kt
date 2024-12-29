@@ -164,9 +164,9 @@ fun EditNoteScreen(
         }
         LongButton(text = "Зберегти зміни") {
             //if (selectedImageUri.value != null) {
-                //saveNoteImage(
+            //saveNoteImage(
             if (titleState.value.isNotEmpty() && contentState.value.isNotEmpty()) {
-            saveNoteToFireStore(
+                saveNoteToFireStore(
                     //selectedImageUri.value!!,
                     //storage,
                     firestore,
@@ -189,7 +189,7 @@ fun EditNoteScreen(
             }else{
                 errorState.value = "Відповідні поля не заповненні"
             }
-            }/*else{
+        }/*else{
                 saveNoteToFireStore(
                     firestore,
                     "",
@@ -209,41 +209,41 @@ fun EditNoteScreen(
                     }
                 )
             }*/
-        }
-        Spacer(modifier = Modifier.height(10.dp))
-        /*if(selectedImageUri.value == null) {
-            LongButton(
-                backColor = ButtonColorGrey,
-                text = "Add photo",
-            ) {
-                imageLauncher.launch("image/")
-            }
-        }*/
-        /*if (selectedImageUri.value != null) {
-            LongButton(
-                backColor = ButtonColorGrey,
-                text = "Remove photo",
-            ) {
-                selectedImageUri.value = null
-            }
-            Row {
-                Image(
-                    painter = rememberAsyncImagePainter(
-                        model = selectedImageUri.value
-                    ),
-                    contentDescription = "User_photo",
-                    modifier = Modifier.fillMaxSize(),
-                )
-
-                SmallButton(
-                    icon = painterResource(id = R.drawable.delete_button),
-                    desc = "delete button"
-                ) {
-
-                }
-            }
+    }
+    Spacer(modifier = Modifier.height(10.dp))
+    /*if(selectedImageUri.value == null) {
+        LongButton(
+            backColor = ButtonColorGrey,
+            text = "Add photo",
+        ) {
+            imageLauncher.launch("image/")
         }
     }*/
+    /*if (selectedImageUri.value != null) {
+        LongButton(
+            backColor = ButtonColorGrey,
+            text = "Remove photo",
+        ) {
+            selectedImageUri.value = null
+        }
+        Row {
+            Image(
+                painter = rememberAsyncImagePainter(
+                    model = selectedImageUri.value
+                ),
+                contentDescription = "User_photo",
+                modifier = Modifier.fillMaxSize(),
+            )
+
+            SmallButton(
+                icon = painterResource(id = R.drawable.delete_button),
+                desc = "delete button"
+            ) {
+
+            }
+        }
+    }
+}*/
 }
 /*
 private fun saveNoteImage(

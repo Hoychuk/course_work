@@ -1,8 +1,9 @@
-package com.example.noteapp.ui.note
+/*package com.example.noteapp.ui.note
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -26,15 +27,18 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.rememberAsyncImagePainter
 import com.example.noteapp.R
 import com.example.noteapp.data.Note
 import com.example.noteapp.ui.objects.CalendarScreenDataObject
 import com.example.noteapp.ui.items.LongButton
 import com.example.noteapp.ui.items.RoundedCornerTextField
 import com.example.noteapp.ui.items.SmallButton
+import com.example.noteapp.ui.theme.ButtonColorGrey
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 
 @Composable
@@ -42,6 +46,7 @@ fun NewNoteScreen(
     onBackClick: (CalendarScreenDataObject) -> Unit,
     uid: String,
     date: String
+    //onSaved: () -> Unit
 ) {
 
     val titleState = remember {
@@ -54,19 +59,34 @@ fun NewNoteScreen(
     val errorState = remember {
         mutableStateOf("")
     }
+    val selectedImageUri = remember {
+        mutableStateOf<Uri?>(null)
+    }
 
     val firestore = remember {
         Firebase.firestore
+    }
+
+    val storage = remember {
+        Firebase.storage
+    }
+
+    val imageLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        selectedImageUri.value = uri
     }
 
     Box(
         modifier = Modifier.fillMaxSize()
             .background(Color.White)
     )
-    Column(modifier = Modifier.fillMaxSize().padding(
-        start = 20.dp, end = 20.dp
-    ),
-        horizontalAlignment = Alignment.CenterHorizontally) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(
+            start = 20.dp, end = 20.dp
+        ),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Spacer(modifier = Modifier.height(60.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -96,7 +116,7 @@ fun NewNoteScreen(
         RoundedCornerTextField(
             text = titleState.value,
             label = "Заголовок"
-        ){
+        ) {
             titleState.value = it
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -106,10 +126,10 @@ fun NewNoteScreen(
             singleLine = false,
             text = contentState.value,
             label = "Зміст"
-        ){
+        ) {
             contentState.value = it
         }
-        if(errorState.value.isNotEmpty()) {
+        if (errorState.value.isNotEmpty()) {
             Text(
                 text = errorState.value,
                 color = Color.Red,
@@ -122,59 +142,57 @@ fun NewNoteScreen(
             //if (selectedImageUri.value != null) {
             //saveNoteImage(
             if (titleState.value.isNotEmpty() && contentState.value.isNotEmpty()) {
+                if (selectedImageUri.value == null) {
 
-                saveNoteToFireStore(
-                    //selectedImageUri.value!!,
-                    //storage,
-                    firestore,
-                    Note(
-                        title = titleState.value,
-                        content = contentState.value,
-                        date = date
-                    ),
-                    uid,
-                    onSaved = {
-                        onBackClick(CalendarScreenDataObject(uid))
-                        //onSaved()
-                    },
-                    onError = { error ->
-                        errorState.value = error
-                    }
-                )
-            }else{
+                    saveNoteToFireStore(
+                        firestore,
+                        "",
+                        Note(
+                            title = titleState.value,
+                            content = contentState.value,
+                            date = date
+                        ),
+                        uid,
+                        onSaved = {
+                            onBackClick(CalendarScreenDataObject(uid))
+                        },
+                        onError = { error ->
+                            errorState.value = error
+                        }
+                    )
+                } else {
+                    saveNoteImage(
+                        selectedImageUri.value!!,
+                        storage,
+                        firestore,
+                        Note(
+                            title = titleState.value,
+                            content = contentState.value,
+                            date = date
+                        ),
+                        uid,
+                        onSaved = {
+                            onBackClick(CalendarScreenDataObject(uid))
+                        },
+                        onError = { error ->
+                            errorState.value = error
+                        }
+                    )
+                }
+            } else {
                 errorState.value = "Відповідні поля не заповненні"
             }
         }
-        /*else{
-                saveNoteToFireStore(
-                    firestore,
-                    "",
-                    Note(
-                        title = titleState.value,
-                        content = contentState.value,
-                        date = date
-                    ),
-                    uid,
-                    onSaved = {
-                        onBackClick(CalendarScreenDataObject(uid))
-                        //onSaved()
-                    },
-                    onError = {
-
-                    }
-                )
-            }*/
-        }
         Spacer(modifier = Modifier.height(10.dp))
-        /*if(selectedImageUri.value == null) {
+        if (selectedImageUri.value == null) {
             LongButton(
                 backColor = ButtonColorGrey,
                 text = "Add photo",
             ) {
                 imageLauncher.launch("image/")
             }
-        }*/
-        /*if (selectedImageUri.value != null) {
+        }
+        if (selectedImageUri.value != null) {
             LongButton(
                 backColor = ButtonColorGrey,
                 text = "Remove photo",
@@ -189,18 +207,11 @@ fun NewNoteScreen(
                     contentDescription = "User_photo",
                     modifier = Modifier.fillMaxSize(),
                 )
-
-                SmallButton(
-                    icon = painterResource(id = R.drawable.delete_button),
-                    desc = "delete button"
-                ) {
-
-                }
             }
         }
-    }*/
+    }
 }
-/*
+
 private fun saveNoteImage(
     uri: Uri,
     storage: FirebaseStorage,
@@ -208,7 +219,7 @@ private fun saveNoteImage(
     note: Note,
     uid: String,
     onSaved: () -> Unit,
-    onError: () -> Unit
+    onError: (String) -> Unit
 ){
     val timeStamp = System.currentTimeMillis()
     val storageRef = storage.reference
@@ -226,16 +237,17 @@ private fun saveNoteImage(
                     onSaved()
                 },
                 onError = {
-                    onError()
+                    onError(it)
                 }
             )
         }
     }
 }
-*/
+
+
 private fun saveNoteToFireStore(
     firestore: FirebaseFirestore,
-    //url: String,
+    url: String,
     note: Note,
     uid: String,
     onSaved: () -> Unit,
@@ -244,11 +256,11 @@ private fun saveNoteToFireStore(
 
     val db = firestore.collection("notes.${uid}")
     val key = db.document().id
-    db.document(key).set(note.copy(key = key, /*imageUrl = url*/))
+    db.document(key).set(note.copy(key = key, imageUrl = url))
         .addOnSuccessListener {
             onSaved()
         }
         .addOnFailureListener{
             onError(it.message?:"Save Error")
         }
-}
+}*/
