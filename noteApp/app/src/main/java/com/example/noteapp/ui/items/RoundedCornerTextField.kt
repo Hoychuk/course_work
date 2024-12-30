@@ -9,6 +9,8 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import com.example.noteapp.ui.theme.TextFildBackgrund
 
@@ -19,6 +21,7 @@ fun RoundedCornerTextField(
     singleLine: Boolean = true,
     text: String,
     label: String,
+    password: Boolean = false,
     onValueChange: (String) -> Unit
 ) {
     TextField(value = text, onValueChange = {
@@ -36,6 +39,11 @@ fun RoundedCornerTextField(
             Text(text = label, color = Color.Gray)
         },
         singleLine = singleLine,
-        maxLines = maxLines
+        maxLines = maxLines,
+        visualTransformation = if (password){
+            PasswordVisualTransformation()
+        } else {
+            VisualTransformation.None
+        }
     )
 }

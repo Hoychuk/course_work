@@ -74,7 +74,8 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(10.dp))
         RoundedCornerTextField(
             text = passwordState.value,
-            label = "Пароль"
+            label = "Пароль",
+            password = true
         ){
             passwordState.value = it
         }

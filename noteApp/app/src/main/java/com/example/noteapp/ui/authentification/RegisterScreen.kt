@@ -49,6 +49,11 @@ fun RegisterScreen(
     val passwordState = remember {
         mutableStateOf("")
     }
+
+    val passwordState2 = remember {
+        mutableStateOf("")
+    }
+
     Box(
         modifier = Modifier.fillMaxSize()
             .background(Color.White)
@@ -67,16 +72,25 @@ fun RegisterScreen(
         Spacer(modifier = Modifier.height(100.dp))
         RoundedCornerTextField(
             text = emailState.value,
-            label = "Email"
+            label = "Email",
         ){
             emailState.value = it
         }
         Spacer(modifier = Modifier.height(10.dp))
         RoundedCornerTextField(
             text = passwordState.value,
-            label = "Пароль"
+            label = "Пароль",
+            password = true
         ){
             passwordState.value = it
+        }
+        Spacer(modifier = Modifier.height(10.dp))
+        RoundedCornerTextField(
+            text = passwordState2.value,
+            label = "Повторіть пароль",
+            password = true
+        ){
+            passwordState2.value = it
         }
         Spacer(modifier = Modifier.height(10.dp))
         if(errorState.value.isNotEmpty()) {
@@ -92,6 +106,7 @@ fun RegisterScreen(
                 auth,
                 emailState.value,
                 passwordState.value,
+                passwordState2.value,
                 onRegisterSuccess = { navData ->
                     //onRegisterSuccess()
                     onRegisterSuccess(navData)
@@ -112,11 +127,25 @@ fun RegisterScreen(
 fun register(auth: FirebaseAuth,
              email: String,
              password: String,
+             password2: String,
              onRegisterSuccess: (CalendarScreenDataObject) -> Unit,
              onRegisterFailure: (String) -> Unit){
 
     if (email.isBlank() || password.isBlank()){
         onRegisterFailure("Email та пароль не можуть бути порожніми")
+        return
+    }
+    if (password.length < 6){
+        onRegisterFailure("Пароль повинен бути більше 6 символів")
+        return
+    }
+    if(!email.contains("@")){
+        onRegisterFailure("Невірний email")
+        return
+    }
+
+    if (password != password2){
+        onRegisterFailure("Різні паролі")
         return
     }
 
